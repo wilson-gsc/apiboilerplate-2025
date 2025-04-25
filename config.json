@@ -1,10 +1,10 @@
 ﻿{
     "database": {
-        "host": "localhost",
+        "host": "153.92.15.26",
         "port": 3306,
-        "user": "root",
-        "password": "letmeinsyo",
-        "database": "iptfinals"
+        "user": "u286307273_api",
+        "password": "9T2Z5$3UKkgSYzE",
+        "database": "u286307273_api"
     },
     "secret": "55c3e8b2-e457-4f02-a274-bc1c65c6237b",
     "emailFrom": "admin@ipt.com",
