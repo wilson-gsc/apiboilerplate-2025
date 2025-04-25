@@ -1,0 +1,19 @@
+﻿{
+    "database": {
+        "host": "localhost",
+        "port": 3306,
+        "user": "root",
+        "password": "letmeinsyo",
+        "database": "iptfinals"
+    },
+    "secret": "55c3e8b2-e457-4f02-a274-bc1c65c6237b",
+    "emailFrom": "admin@ipt.com",
+    "smtpOptions": {
+        "host": "smtp.ethereal.email",
+        "port": 587,
+        "auth": {
+            "user": "toy71@ethereal.email",
+            "pass": "zhwzTZau2rNJxF1aHs"
+        }
+    }
+}
