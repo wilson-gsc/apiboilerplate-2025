@@ -106,6 +106,8 @@ async function register(params, origin) {
     account.role = isFirstAccount ? Role.Admin : Role.User;
     account.verificationToken = randomTokenString();
 
+    account.status = isFirstAccount ? Status.Active : Status.InActive;
+    
     // hash password
     account.passwordHash = await hash(params.password);
     // save account
