@@ -8,3 +8,6 @@ hostname:
 
 srv1417.hstgr.io 
 153.92.15.26
+
+remote:
+mysql -h 153.92.15.26-u u286307273_api -p 9T2Z5$3UKkgSYzE u286307273_api
