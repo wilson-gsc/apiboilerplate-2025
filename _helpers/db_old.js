@@ -1,39 +1,31 @@
-const config = require('../config');
+const config = require('config.json');
 const mysql = require('mysql2/promise');
 const { Sequelize } = require('sequelize');
+
+// It's good practice to parse numbers and provide defaults
+const dbPort = parseInt(process.env.DB_PORT || '3306', 10);
+const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
 
 module.exports = db = {};
 
 initialize();
 
 async function initialize() {
-    // Use destructuring to get database config values cleanly
+    // create db if it doesn't already exist
     const { host, port, user, password, database } = config.database;
     
-    // Ensure essential DB config is present (optional but recommended)
-    if (!host || !port || !user || !database) {
-        console.error("FATAL ERROR: Missing database configuration in environment variables or config/index.js.");
-        // Password might be intentionally empty for some local setups, but usually required.
-        // Add check for password if it's always required: !password
-        process.exit(1);
-    }
-
-    // create db if it doesn't already exist using config values
     const connection = await mysql.createConnection({ host, port, user, password });
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
-    await connection.end(); // Close the initial connection used just for DB creation
 
-    // connect to db using config values
+    // connect to db
+    // const sequelize = new Sequelize(database, user, password, { dialect: 'mysql' });
     const sequelize = new Sequelize(
         database,
         user,
-        password, // Password comes from config
+        password,
         {
            host: host,
-           port: port, // Use the port from config (already parsed)
-           dialect: 'mysql',
-           logging: false // Optional: disable sequelize logging if too verbose
-           // Add other sequelize options if needed
+           dialect: 'mysql'
         }
        );
 
@@ -49,21 +41,14 @@ async function initialize() {
     db.RefreshToken.belongsTo(db.Account);
 
     // Define Account <-> Employee Relationship (One-to-One)
+    // If an Account is deleted, set the employee's accountId to NULL.
     db.Account.hasOne(db.Employee, { foreignKey: 'userId', as: 'employee' });
     db.Employee.belongsTo(db.Account, { foreignKey: 'userId', as: 'user' });
-
-    // Define Department <-> Employee Relationship (One-to-Many)
     db.Department.hasMany(db.Employee, { foreignKey: 'departmentId', as: 'employees' });
     db.Employee.belongsTo(db.Department, { foreignKey: 'departmentId', as: 'department' });
-
-    // Define Employee <-> Workflow Relationship (One-to-Many)
     db.Employee.hasMany(db.Workflow, { foreignKey: 'employeeId', as: 'workflows' });
     db.Workflow.belongsTo(db.Employee, { foreignKey: 'employeeId', as: 'employee' });
 
     // sync all models with database
-    // Consider using migrations for production instead of sync({ alter: true })
-    // sync({ alter: false }) is safer but won't update existing tables
     await sequelize.sync({ alter: false });
-
-    console.log('Database synchronized successfully.'); // Add confirmation log
 }
